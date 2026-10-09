@@ -17,7 +17,7 @@ jobs:
       - run: /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Ember" ios/Runner/Info.plist
       - name: Enable iOS icons
         run: |
-          perl -pi -e 's/ios: false/ios: true\n  remove_alpha_ios: true/' pubspec.yaml
+          perl -pi -e 's/ios: false/ios: true\n  remove_alpha_ios: true/; s/android: true/android: false/' pubspec.yaml
       - run: flutter pub get
       - run: dart run flutter_launcher_icons
       - run: flutter build ios --release --no-codesign

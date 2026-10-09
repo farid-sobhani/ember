@@ -15,7 +15,9 @@ jobs:
       - run: flutter create --platforms=ios --project-name calorie_counter --org com.ember .
       - run: rm -f test/widget_test.dart
       - run: /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Ember" ios/Runner/Info.plist
-      - run: perl -pi -e 's/ios: false/ios: true\n  remove_alpha_ios: true/' pubspec.yaml
+      - name: Enable iOS icons
+        run: |
+          perl -pi -e 's/ios: false/ios: true\n  remove_alpha_ios: true/' pubspec.yaml
       - run: flutter pub get
       - run: dart run flutter_launcher_icons
       - run: flutter build ios --release --no-codesign

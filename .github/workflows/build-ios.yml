@@ -1,0 +1,29 @@
+name: Build iOS (unsigned IPA)
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: stable
+      - run: flutter create --platforms=ios --project-name calorie_counter --org com.ember .
+      - run: rm -f test/widget_test.dart
+      - run: /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Ember" ios/Runner/Info.plist
+      - run: perl -pi -e 's/ios: false/ios: true\n  remove_alpha_ios: true/' pubspec.yaml
+      - run: flutter pub get
+      - run: dart run flutter_launcher_icons
+      - run: flutter build ios --release --no-codesign
+      - run: |
+          mkdir Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -qr Ember-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ember-ipa-unsigned
+          path: Ember-unsigned.ipa
